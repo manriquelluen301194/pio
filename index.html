@@ -36,22 +36,19 @@ const MENU_DATA = {
   ]
 };
 
-// Configuración de Identidad
 const LOGO_ID = '1vM3RJvT1QwdYO3jKlfTOdmDr_7j5hs4r';
 const LOGO_URL = `https://lh3.googleusercontent.com/u/0/d/${LOGO_ID}=w1000-h1000`;
 const WHATSAPP_NUMBER = "13292039467";
 
 const LogoImage = ({ className, alt }) => {
   const [error, setError] = useState(false);
-  
   if (error) {
     return (
-      <div className={`${className} bg-neutral-900 flex items-center justify-center text-red-600 font-black text-[10px] text-center p-2 uppercase border border-red-900/20 rounded-full`}>
-        POLLO
+      <div className={`${className} bg-neutral-900 flex items-center justify-center text-red-600 font-black text-center p-2 uppercase border border-red-900/20 rounded-full text-[10px]`}>
+        ¿Y TÚ TE LO VAS A PERDER?
       </div>
     );
   }
-
   return (
     <img 
       src={LOGO_URL} 
@@ -67,15 +64,11 @@ const LogoImage = ({ className, alt }) => {
 export default function App() {
   const [cart, setCart] = useState({});
   const [deliveryType, setDeliveryType] = useState('recoger');
-  const [tip, setTip] = useState(0);
   const [customerInfo, setCustomerInfo] = useState({ name: '', phone: '', address: '' });
   const [scrolled, setScrolled] = useState(false);
 
-  // Efecto para el header pegajoso
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -95,225 +88,136 @@ export default function App() {
   const cartValues = useMemo(() => {
     const subtotal = Object.values(cart).reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const count = Object.values(cart).reduce((acc, item) => acc + item.quantity, 0);
-    return { subtotal, total: subtotal + (deliveryType === 'delivery' ? tip : 0), count };
-  }, [cart, tip, deliveryType]);
+    return { subtotal, total: subtotal, count };
+  }, [cart]);
 
   const sendOrder = () => {
     if (cartValues.count === 0) return;
     if (deliveryType === 'delivery' && (!customerInfo.name || !customerInfo.phone || !customerInfo.address)) {
-      alert("Por favor completa los datos de entrega");
+      alert("Por favor completa los datos de envío.");
       return;
     }
 
     let message = '🍗 *PEDIDO - SE ESCAPÓ EL POLLO* 🍗\n\n';
-    message += '📋 *DETALLE:*\n';
+    message += '📋 *ORDEN:*\n';
     Object.values(cart).forEach(item => {
-      message += `• ${item.name} (x${item.quantity}) - $${item.price * item.quantity}\n`;
+      message += `• ${item.name} x${item.quantity} - $${item.price * item.quantity}\n`;
     });
-    
-    message += `\n💰 *SUBTOTAL: $${cartValues.subtotal}*`;
-    
-    if (deliveryType === 'recoger') {
-      message += '\n🏪 *TIPO: RECOGER EN TIENDA*';
-    } else {
-      message += '\n🚗 *TIPO: DELIVERY*';
-      message += `\n👤 *Cliente:* ${customerInfo.name.toUpperCase()}`;
-      message += `\n📞 *Cel:* ${customerInfo.phone}`;
-      message += `\n📍 *Dir:* ${customerInfo.address.toUpperCase()}`;
-      message += `\n🔥 *TOTAL: $${cartValues.total}*`;
-    }
+    message += `\n💰 *TOTAL: $${cartValues.total}*`;
+    message += deliveryType === 'recoger' ? '\n🏪 *MODO: RECOGER EN TIENDA*' : `\n🚗 *MODO: DELIVERY*\n👤 *Nombre:* ${customerInfo.name}\n📞 *Tel:* ${customerInfo.phone}\n📍 *Dir:* ${customerInfo.address}`;
 
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-neutral-100 selection:bg-red-600/30 font-sans overflow-x-hidden pt-safe">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-red-600/30 overflow-x-hidden pt-safe">
       
-      {/* Header Optimizado */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-300 px-4 pt-safe ${
-        scrolled ? 'py-3 bg-black/80 backdrop-blur-xl border-b border-white/5' : 'py-6 bg-transparent'
-      }`}>
+      {/* Header */}
+      <header className={`fixed top-0 w-full z-50 transition-all duration-300 px-4 pt-safe ${scrolled ? 'py-3 bg-black/90 backdrop-blur-md border-b border-white/5' : 'py-6 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <LogoImage 
-              className={`transition-all duration-500 ${scrolled ? 'w-10 h-10 rotate-0' : 'w-0 h-0 -rotate-90 opacity-0'}`}
-              alt="Mini Logo"
-            />
-            <div className="flex flex-col">
-              <h1 className="font-black text-sm sm:text-xl tracking-tighter uppercase leading-none">
-                SE ESCAPÓ EL POLLO
-              </h1>
-              <span className="text-[10px] text-red-600 font-black tracking-widest mt-1">NEW JERSEY</span>
-            </div>
+            <LogoImage className={`transition-all duration-500 ${scrolled ? 'w-10 h-10' : 'w-0 h-0 opacity-0'}`} alt="Logo Mini" />
+            <h1 className="font-black text-sm sm:text-xl tracking-tighter uppercase">SE ESCAPÓ EL POLLO</h1>
           </div>
-          
-          <a href={`tel:${WHATSAPP_NUMBER}`} className="bg-white text-black px-4 py-2 rounded-full font-black text-xs hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center gap-2">
-            <Phone size={14} strokeWidth={3} />
-            <span className="hidden xs:inline">PEDIR YA</span>
+          <a href={`tel:${WHATSAPP_NUMBER}`} className="bg-red-600 text-white px-4 py-2 rounded-full font-black text-xs hover:scale-105 transition-transform flex items-center gap-2">
+            <Phone size={14} /> LLAMAR
           </a>
         </div>
       </header>
 
-      {/* Hero Section Minimalista */}
-      <section className="relative h-[80vh] flex flex-col items-center justify-center text-center px-6">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-600/5 to-transparent pointer-events-none" />
-        
-        <div className="relative z-10 space-y-8 animate-in fade-in zoom-in duration-1000">
-          <LogoImage 
-            className="w-56 h-56 sm:w-80 sm:h-80 mx-auto drop-shadow-[0_0_80px_rgba(220,38,38,0.2)]"
-            alt="Logo Principal"
-          />
-          
-          <div className="space-y-2">
-            <h2 className="text-4xl sm:text-7xl font-black tracking-tighter uppercase leading-[0.9]">
-              EL SABOR <br /> <span className="text-red-600">QUE SE ESCAPA</span>
-            </h2>
-            <p className="text-neutral-500 font-bold tracking-[0.4em] text-[10px] sm:text-xs">AUTÉNTICO BROASTER PERUANO</p>
-          </div>
-        </div>
-        
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-px h-12 bg-gradient-to-b from-neutral-800 to-transparent" />
+      {/* Hero Section */}
+      <section className="relative h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-red-600/10 to-transparent pointer-events-none" />
+        <LogoImage className="w-64 h-64 sm:w-[30rem] sm:h-[30rem] object-contain drop-shadow-[0_0_60px_rgba(220,38,38,0.2)] mb-8" alt="Logo Principal" />
+        <h2 className="text-xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase max-w-4xl leading-tight">
+          EL REAL <span className="text-red-600">BROASTER PERUANO</span> DE <span className="text-red-600">NEW JERSEY</span>
+        </h2>
+        <div className="mt-12 animate-bounce opacity-20 hidden sm:block">
+           <div className="w-0.5 h-16 bg-white rounded-full mx-auto" />
         </div>
       </section>
 
-      {/* Grid de Menú */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
+      {/* Grid de Menú Unificado */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8 space-y-24">
           {Object.entries(MENU_DATA).map(([category, items]) => (
-            <div key={category} id={category} className="scroll-mt-32">
+            <section key={category}>
               <h3 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter mb-12 flex items-center gap-4">
-                <span className="w-12 h-1 bg-red-600 rounded-full" />
-                {category}
+                <span className="w-12 h-1.5 bg-red-600 rounded-full" /> {category}
               </h3>
-              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {items.map((item) => (
-                  <div key={item.id} className="group bg-neutral-900/20 border border-white/5 rounded-[2.5rem] p-6 sm:p-8 hover:bg-neutral-900/50 hover:border-red-600/30 transition-all duration-500 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start mb-8">
-                        <div className="text-4xl sm:text-5xl bg-neutral-900 rounded-3xl w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform duration-500">
-                          {item.emoji}
-                        </div>
-                        <div className="bg-red-600/10 text-red-500 px-4 py-2 rounded-2xl font-black text-xl">
-                          ${item.price}
-                        </div>
+                  <div key={item.id} className="bg-neutral-900/30 border border-white/5 rounded-[2.5rem] p-6 sm:p-8 hover:bg-neutral-900 transition-all duration-500 group">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="text-5xl bg-neutral-800 w-20 h-20 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-transform">
+                        {item.emoji}
                       </div>
-                      <h4 className="text-xl sm:text-2xl font-black uppercase mb-3 tracking-tight">{item.name}</h4>
-                      <p className="text-neutral-500 text-xs sm:text-sm font-medium leading-relaxed">{item.description}</p>
-                      {item.note && (
-                        <p className="text-red-500 text-[9px] font-black mt-4 tracking-widest uppercase">{item.note}</p>
-                      )}
+                      <span className="text-2xl font-black text-red-500">${item.price}</span>
                     </div>
+                    <h4 className="text-xl sm:text-2xl font-black uppercase mb-2">{item.name}</h4>
+                    <p className="text-neutral-500 text-sm mb-6">{item.description}</p>
+                    {item.note && <p className="text-red-600 text-[10px] font-black uppercase mb-4 tracking-widest">{item.note}</p>}
                     
-                    <div className="mt-8 flex items-center gap-2 bg-black/40 p-2 rounded-3xl border border-white/5">
-                      <button 
-                        onClick={() => updateQuantity(item, -1)}
-                        className="flex-1 h-12 flex items-center justify-center rounded-2xl bg-neutral-800 hover:bg-red-600 text-white transition-all active:scale-95 disabled:opacity-10"
-                        disabled={!cart[item.id]}
-                      >
-                        <Minus size={20} strokeWidth={3} />
-                      </button>
-                      <div className="w-12 text-center font-black text-xl">{cart[item.id]?.quantity || 0}</div>
-                      <button 
-                        onClick={() => updateQuantity(item, 1)}
-                        className="flex-1 h-12 flex items-center justify-center rounded-2xl bg-neutral-800 hover:bg-red-600 text-white transition-all active:scale-95"
-                      >
-                        <Plus size={20} strokeWidth={3} />
-                      </button>
+                    <div className="flex items-center gap-2 bg-black/40 p-2 rounded-2xl border border-white/5">
+                      <button onClick={() => updateQuantity(item, -1)} className="flex-1 h-12 rounded-xl bg-neutral-800 hover:bg-red-600 disabled:opacity-10 transition-colors" disabled={!cart[item.id]}><Minus className="mx-auto" size={20}/></button>
+                      <span className="w-12 text-center font-black text-xl">{cart[item.id]?.quantity || 0}</span>
+                      <button onClick={() => updateQuantity(item, 1)} className="flex-1 h-12 rounded-xl bg-neutral-800 hover:bg-red-600 transition-colors"><Plus className="mx-auto" size={20}/></button>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
           ))}
         </div>
 
         {/* Carrito Sticky */}
-        <aside className="lg:col-span-4 lg:sticky lg:top-28 h-fit">
+        <aside className="lg:col-span-4 lg:sticky lg:top-24 h-fit">
           <div className="bg-neutral-900 border border-white/10 rounded-[3rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-[60px] rounded-full -mr-16 -mt-16" />
-            
             <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
-              <ShoppingBag className="text-red-600" /> RESUMEN
+              <ShoppingBag className="text-red-600" /> MI ORDEN
             </h3>
 
             {cartValues.count === 0 ? (
-              <div className="text-center py-10 opacity-30">
-                <ShoppingBag size={48} className="mx-auto mb-4" strokeWidth={1} />
-                <p className="text-xs font-black uppercase tracking-widest">Carrito Vacío</p>
-              </div>
+              <div className="text-center py-12 opacity-30 uppercase font-black text-[10px] tracking-widest">Carrito Vacío</div>
             ) : (
               <div className="space-y-8">
-                <div className="space-y-4 max-h-[30vh] overflow-y-auto pr-2 scrollbar-hide">
+                <div className="space-y-4 max-h-[35vh] overflow-y-auto pr-2 custom-scrollbar">
                   {Object.values(cart).map((item) => (
-                    <div key={item.id} className="flex justify-between items-center group animate-in slide-in-from-right-2">
+                    <div key={item.id} className="flex justify-between items-center group animate-in">
                       <div className="flex items-center gap-4">
-                        <div className="text-lg bg-neutral-800 w-10 h-10 rounded-xl flex items-center justify-center">{item.emoji}</div>
+                        <div className="text-xl bg-neutral-800 w-12 h-12 rounded-xl flex items-center justify-center">{item.emoji}</div>
                         <div>
-                          <p className="text-[11px] font-black uppercase leading-none">{item.name}</p>
-                          <p className="text-[10px] text-red-500 font-bold mt-1 uppercase">{item.quantity} Unidad(es)</p>
+                          <p className="text-xs font-black uppercase">{item.name}</p>
+                          <p className="text-[10px] text-red-500 font-bold">x{item.quantity} - ${item.price * item.quantity}</p>
                         </div>
                       </div>
-                      <button onClick={() => updateQuantity(item, -item.quantity)} className="text-neutral-700 hover:text-red-500 transition-colors p-2">
-                        <Trash2 size={16} />
-                      </button>
+                      <button onClick={() => updateQuantity(item, -item.quantity)} className="text-neutral-600 hover:text-red-500 p-2"><Trash2 size={16} /></button>
                     </div>
                   ))}
                 </div>
 
                 <div className="space-y-6 pt-6 border-t border-white/5">
                   <div className="grid grid-cols-2 gap-2 bg-black/50 p-1.5 rounded-2xl border border-white/5">
-                    <button 
-                      onClick={() => setDeliveryType('recoger')}
-                      className={`py-3 rounded-xl font-black text-[10px] tracking-widest transition-all ${deliveryType === 'recoger' ? 'bg-neutral-800 text-white shadow-xl' : 'text-neutral-600'}`}
-                    >
-                      RECOGER
-                    </button>
-                    <button 
-                      onClick={() => setDeliveryType('delivery')}
-                      className={`py-3 rounded-xl font-black text-[10px] tracking-widest transition-all ${deliveryType === 'delivery' ? 'bg-neutral-800 text-white shadow-xl' : 'text-neutral-600'}`}
-                    >
-                      DELIVERY
-                    </button>
+                    {['recoger', 'delivery'].map(type => (
+                      <button key={type} onClick={() => setDeliveryType(type)} className={`py-3 rounded-xl font-black text-[10px] tracking-widest uppercase transition-all ${deliveryType === type ? 'bg-neutral-800 text-white shadow-lg' : 'text-neutral-600'}`}>{type}</button>
+                    ))}
                   </div>
 
                   {deliveryType === 'delivery' && (
-                    <div className="space-y-3 animate-in fade-in duration-500">
-                      <input 
-                        type="text" 
-                        placeholder="NOMBRE COMPLETO" 
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold focus:border-red-600 transition-all outline-none" 
-                        value={customerInfo.name} 
-                        onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} 
-                      />
-                      <input 
-                        type="tel" 
-                        placeholder="TELÉFONO" 
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold focus:border-red-600 transition-all outline-none" 
-                        value={customerInfo.phone} 
-                        onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} 
-                      />
-                      <textarea 
-                        placeholder="DIRECCIÓN" 
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold focus:border-red-600 transition-all outline-none h-24 resize-none" 
-                        value={customerInfo.address} 
-                        onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} 
-                      />
+                    <div className="space-y-3">
+                      <input type="text" placeholder="NOMBRE" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold outline-none focus:border-red-600" value={customerInfo.name} onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} />
+                      <input type="tel" placeholder="TELÉFONO" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold outline-none focus:border-red-600" value={customerInfo.phone} onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} />
+                      <textarea placeholder="DIRECCIÓN" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 px-5 text-xs font-bold outline-none focus:border-red-600 h-24 resize-none" value={customerInfo.address} onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} />
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center bg-black/40 p-6 rounded-[2rem] border border-white/5">
-                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Total</span>
+                  <div className="flex justify-between items-center bg-black/60 p-6 rounded-[2rem] border border-white/5">
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Total</span>
                     <span className="text-4xl font-black text-white tracking-tighter">${cartValues.total}</span>
                   </div>
 
-                  <button 
-                    onClick={sendOrder}
-                    className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-6 rounded-[2rem] shadow-2xl shadow-green-900/20 transition-all active:scale-[0.97] flex items-center justify-center gap-4 text-sm tracking-tight"
-                  >
-                    <MessageCircle size={24} fill="currentColor" /> PEDIR POR WHATSAPP
+                  <button onClick={sendOrder} className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-6 rounded-[2rem] shadow-2xl transition-all flex items-center justify-center gap-4 text-sm active:scale-95">
+                    <MessageCircle size={24} /> PEDIR POR WHATSAPP
                   </button>
                 </div>
               </div>
@@ -322,51 +226,22 @@ export default function App() {
         </aside>
       </main>
 
-      <footer className="bg-black py-20 px-6 border-t border-white/5">
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center gap-8">
-          <LogoImage className="w-24 h-24" alt="Footer Logo" />
-          <div>
-            <h4 className="text-2xl font-black tracking-tighter mb-2">SE ESCAPÓ EL POLLO</h4>
-            <p className="text-neutral-600 text-[10px] font-bold tracking-[0.3em] uppercase">The Best Chicken in NJ</p>
-          </div>
-          <div className="flex gap-8">
-            <a href={`tel:${WHATSAPP_NUMBER}`} className="text-neutral-400 hover:text-white transition-colors"><Phone size={24} /></a>
-            <a href="#" className="text-neutral-400 hover:text-white transition-colors"><MessageCircle size={24} /></a>
-          </div>
-          <p className="text-neutral-800 text-[9px] font-black uppercase mt-10">© {new Date().getFullYear()} · Hecho con ❤️ para NJ</p>
-        </div>
+      <footer className="bg-black py-20 px-4 border-t border-white/5 text-center">
+        <LogoImage className="w-24 h-24 mx-auto mb-6" alt="Footer Logo" />
+        <h4 className="text-xl font-black uppercase tracking-widest mb-2">SE ESCAPÓ EL POLLO</h4>
+        <p className="text-neutral-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-8">NJ Real Broaster Edition</p>
+        <p className="text-neutral-800 text-[9px] font-black uppercase">© {new Date().getFullYear()} · NJ Peruano</p>
       </footer>
 
-      {/* Estilos Globales para Producción */}
       <style dangerouslySetInnerHTML={{ __html: `
-        :root {
-          color-scheme: dark;
-        }
-        * {
-          -webkit-tap-highlight-color: transparent;
-          -webkit-font-smoothing: antialiased;
-        }
-        body {
-          background-color: #050505;
-          margin: 0;
-          padding: 0;
-        }
+        :root { color-scheme: dark; }
+        * { -webkit-tap-highlight-color: transparent; }
         .pt-safe { padding-top: env(safe-area-inset-top); }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        
-        @keyframes fadeIn { 
-          from { opacity: 0; transform: translateY(20px); } 
-          to { opacity: 1; transform: translateY(0); } 
-        }
-        .animate-in { 
-          animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-        }
-
-        /* Optimización para GitHub Pages (Rutas relativas y Base) */
-        @media (max-width: 640px) {
-          .text-7xl { font-size: 3.5rem; }
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @media (max-width: 640px) { input, textarea { font-size: 16px !important; } }
       `}} />
     </div>
   );
