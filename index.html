@@ -1,30 +1,79 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Utensils, 
   ShoppingBag, 
   Plus, 
   Minus, 
   Phone, 
   MessageCircle, 
-  Clock, 
-  Trash2
+  MapPin,
+  User,
+  DollarSign
 } from 'lucide-react';
 
 /**
- * CONFIGURACIÓN DE DATOS
+ * CONFIGURACIÓN DE DATOS - MENÚ CON IMÁGENES
+ * Se ha reorganizado el orden de las salchipapas según la última solicitud.
  */
 const MENU_DATA = {
   broaster: [
-    { id: 'b1', name: 'EL DESPECHADO', description: 'PECHO BROASTER + PAPAS + ENSALADA', price: 15, emoji: '🍗' },
-    { id: 'b2', name: 'EL COJO', description: 'PIERNA BROASTER + PAPAS + ENSALADA', price: 15, emoji: '🍗' },
-    { id: 'b3', name: 'FOREVER-ALÓN', description: 'ALA BROASTER + PAPAS + ENSALADA', price: 15, emoji: '🍗' }
+    { 
+      id: 'b1', 
+      name: 'EL DESPECHADO', 
+      description: 'PECHO BROASTER + PAPAS + ENSALADA', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1626645272640-9b497e84ca3e?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 'b2', 
+      name: 'EL COJO', 
+      description: 'PIERNA BROASTER + PAPAS + ENSALADA', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 'b3', 
+      name: 'FOREVER-ALÓN', 
+      description: 'ALA BROASTER + PAPAS + ENSALADA', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&q=80&w=800' 
+    }
   ],
   salchipapas: [
-    { id: 's1', name: 'SALCHI FIEL (CLÁSICA)', description: 'PAPAS + HOT DOG', price: 13, emoji: '🌭' },
-    { id: 's2', name: 'SALCHI DE CONO (A LO POBRE)', description: 'PAPAS + HOT DOG + HUEVO + PLÁTANO', price: 15, emoji: '🥔' },
-    { id: 's3', name: 'SALCHI INFIEL', description: 'PAPAS + HOTDOG + DOBLE HUEVO', price: 15, emoji: '🌭' },
-    { id: 's4', name: 'SALCHI CALLAO', description: 'PAPAS + HARTO CHORIZO', price: 15, emoji: '🌭' },
-    { id: 's5', name: 'SALCHI MECHUDA', description: 'PAPAS + HOT DOG + POLLO DESILACHADO', price: 15, emoji: '🌭' }
+    { 
+      id: 's5', 
+      name: 'SALCHI MECHUDA', 
+      description: 'PAPAS + HOT DOG + POLLO DESHILACHADO', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1623231307271-19710d701bb3?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 's4', 
+      name: 'SALCHI CALLAO', 
+      description: 'PAPAS + HARTO CHORIZO', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1544077960-604201fe74bc?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 's1', 
+      name: 'SALCHI FIEL (CLÁSICA)', 
+      description: 'PAPAS + HOT DOG', 
+      price: 13, 
+      image: 'https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 's3', 
+      name: 'SALCHI INFIEL', 
+      description: 'PAPAS + HOTDOG + DOBLE HUEVO', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1518013391915-e4db7454bf2a?auto=format&fit=crop&q=80&w=800' 
+    },
+    { 
+      id: 's2', 
+      name: 'SALCHI DE CONO (A LO POBRE)', 
+      description: 'PAPAS + HOT DOG + HUEVO + PLÁTANO', 
+      price: 15, 
+      image: 'https://images.unsplash.com/photo-1594759023515-d430c823618b?auto=format&fit=crop&q=80&w=800' 
+    }
   ],
   bebidas: [
     { id: 'be1', name: 'INKA COLA', description: 'SODA EN LATA', price: 2, emoji: '🥤' },
@@ -42,12 +91,8 @@ const LOGO_ID = '1vM3RJvT1QwdYO3jKlfTOdmDr_7j5hs4r';
 const LOGO_URL = `https://lh3.googleusercontent.com/u/0/d/${LOGO_ID}=w1000-h1000`;
 const WHATSAPP_NUMBER = "13292039467";
 
-/**
- * COMPONENTE LOGO CON FALLBACK PARA SAFARI
- */
 const LogoImage = ({ className, alt }) => {
   const [error, setError] = useState(false);
-  
   if (error) {
     return (
       <div className={`${className} bg-neutral-900 flex items-center justify-center text-red-600 font-black text-center p-4 border border-red-900/20 rounded-full text-[10px] leading-tight`}>
@@ -55,13 +100,11 @@ const LogoImage = ({ className, alt }) => {
       </div>
     );
   }
-
   return (
     <img 
       src={LOGO_URL} 
       alt={alt} 
       className={className}
-      // Mix-blend-mode puede dar problemas en versiones muy viejas de Safari, se añade respaldo visual
       style={{ mixBlendMode: 'screen', filter: 'contrast(1.1)' }} 
       onError={() => setError(true)}
       loading="lazy"
@@ -72,22 +115,13 @@ const LogoImage = ({ className, alt }) => {
 export default function App() {
   const [cart, setCart] = useState({});
   const [deliveryType, setDeliveryType] = useState('recoger');
+  const [tip, setTip] = useState(0);
   const [customerInfo, setCustomerInfo] = useState({ name: '', phone: '', address: '' });
   const [scrolled, setScrolled] = useState(false);
 
-  // Optimización de scroll para navegadores Webkit (Safari/Chrome)
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -106,105 +140,104 @@ export default function App() {
   const cartValues = useMemo(() => {
     const subtotal = Object.values(cart).reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const count = Object.values(cart).reduce((acc, item) => acc + item.quantity, 0);
-    return { subtotal, total: subtotal, count };
-  }, [cart]);
+    const total = subtotal + (deliveryType === 'delivery' ? Number(tip) : 0);
+    return { subtotal, total, count };
+  }, [cart, tip, deliveryType]);
 
   const sendOrder = () => {
     if (cartValues.count === 0) return;
-    if (deliveryType === 'delivery' && (!customerInfo.name || !customerInfo.phone || !customerInfo.address)) {
-      alert("Por favor completa los datos de envío para continuar.");
-      return;
-    }
-
-    let message = '🍗 *PEDIDO - SE ESCAPÓ EL POLLO* 🍗\n\n';
-    message += '📋 *ORDEN:*\n';
+    
+    let message = '🍗 *PEDIDO - SE ESCAPÓ EL POLLO* 🍗\n';
+    message += '----------------------------------\n';
     Object.values(cart).forEach(item => {
       message += `• ${item.name} x${item.quantity} - $${item.price * item.quantity}\n`;
     });
-    message += `\n💰 *TOTAL: $${cartValues.total}*`;
-    message += deliveryType === 'recoger' 
-      ? '\n🏪 *MODO: RECOGER EN TIENDA*' 
-      : `\n🚗 *MODO: DELIVERY*\n👤 *Nombre:* ${customerInfo.name.toUpperCase()}\n📞 *Tel:* ${customerInfo.phone}\n📍 *Dir:* ${customerInfo.address.toUpperCase()}`;
-
-    // Safari bloquea popups si no vienen de una acción directa del usuario (onClick aquí es seguro)
+    message += '----------------------------------\n';
+    message += `💰 *Subtotal:* $${cartValues.subtotal}\n`;
+    
+    if (deliveryType === 'delivery') {
+      message += `❤️ *Propina:* $${tip}\n`;
+      message += `🚀 *TOTAL:* $${cartValues.total}\n`;
+      message += '----------------------------------\n';
+      message += `🚗 *MODO:* DELIVERY\n`;
+      message += `👤 *Nombre:* ${customerInfo.name.toUpperCase()}\n`;
+      message += `📞 *Tel:* ${customerInfo.phone}\n`;
+      message += `📍 *Dirección:* ${customerInfo.address.toUpperCase()}\n`;
+    } else {
+      message += `🚀 *TOTAL:* $${cartValues.subtotal}\n`;
+      message += '----------------------------------\n';
+      message += `🏪 *MODO:* RECOGER EN TIENDA\n`;
+    }
+    
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-red-600/30 overflow-x-hidden antialiased">
       
-      {/* Header con soporte Safe Area para Notch de iPhone */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 px-4 sm:px-8 pb-3 ${
-        scrolled ? 'pt-safe-blur bg-black/80 backdrop-blur-xl border-b border-white/5' : 'pt-safe bg-transparent'
+      {/* Header */}
+      <header className={`fixed top-0 w-full z-50 transition-all duration-500 px-6 ${
+        scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-8'
       }`}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center py-2">
-          <div className="flex items-center gap-3">
-            <LogoImage className={`transition-all duration-700 ${scrolled ? 'w-10 h-10' : 'w-0 h-0 opacity-0'}`} alt="Logo Mini" />
-            <h1 className="font-black text-sm sm:text-xl tracking-tighter uppercase">SE ESCAPÓ EL POLLO</h1>
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <LogoImage className={`transition-all duration-500 ${scrolled ? 'w-12 h-12' : 'w-0 h-0 opacity-0'}`} alt="Logo Mini" />
+            <h1 className="font-black text-xl tracking-tighter uppercase">SE ESCAPÓ EL POLLO</h1>
           </div>
-          <a href={`tel:${WHATSAPP_NUMBER}`} className="bg-red-600 text-white px-5 py-2.5 rounded-full font-black text-[10px] sm:text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
-            <Phone size={14} strokeWidth={3} /> LLAMAR
+          <a href={`tel:${WHATSAPP_NUMBER}`} className="bg-red-600 px-6 py-2 rounded-full font-black text-xs hover:scale-105 transition-all flex items-center gap-2">
+            <Phone size={14} /> LLAMAR
           </a>
         </div>
       </header>
 
-      {/* Hero Section - Ajustado para Viewport de Safari */}
-      <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-600/10 to-transparent pointer-events-none" />
-        
-        <LogoImage 
-          className="w-64 h-64 sm:w-[28rem] sm:h-[28rem] object-contain drop-shadow-[0_0_80px_rgba(220,38,38,0.25)] mb-8 animate-float" 
-          alt="Logo Principal" 
-        />
-        
-        <h2 className="text-2xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase max-w-5xl leading-[0.9] sm:leading-tight">
-          EL REAL <span className="text-red-600">BROASTER PERUANO</span> <br className="hidden sm:block" /> DE <span className="text-red-600">NEW JERSEY</span>
-        </h2>
-        
-        <div className="mt-12 opacity-30">
-           <div className="w-0.5 h-12 bg-gradient-to-b from-white to-transparent rounded-full mx-auto" />
+      {/* Hero */}
+      <section className="relative min-h-[70vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.15)_0%,transparent_70%)] pointer-events-none" />
+        <LogoImage className="w-64 h-64 sm:w-96 sm:h-96 object-contain drop-shadow-[0_0_80px_rgba(220,38,38,0.4)] mb-8 animate-float" alt="Logo Principal" />
+        <div className="flex flex-col items-center gap-2 animate-in-fade">
+          <h2 className="text-2xl sm:text-5xl font-black tracking-tighter uppercase">
+            <span className="text-red-600 transform scale-y-125 inline-block mr-3">EL REAL</span>
+            <span className="text-white transform scale-y-125 inline-block">BROASTER</span>
+          </h2>
+          <div className="w-24 h-1 bg-red-600 rounded-full mt-4" />
         </div>
       </section>
 
-      {/* Grid de Menú */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
-        <div className="lg:col-span-8 space-y-24">
+      {/* Menú Principal */}
+      <main className="max-w-7xl mx-auto px-6 pb-40 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="lg:col-span-8 space-y-20">
           {Object.entries(MENU_DATA).map(([category, items]) => (
-            <section key={category} className="scroll-mt-32">
-              <h3 className="text-4xl sm:text-6xl font-black uppercase tracking-tighter mb-12 flex items-center gap-4">
-                <span className="w-16 h-2 bg-red-600 rounded-full" /> {category}
+            <section key={category}>
+              <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-4 text-white/90">
+                <span className="w-8 h-1.5 bg-red-600 rounded-full" /> {category}
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {items.map((item) => (
-                  <div key={item.id} className="bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-7 sm:p-9 hover:bg-neutral-900 transition-all duration-500 group flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start mb-8">
-                        <div className="text-5xl bg-black/40 w-20 h-20 flex items-center justify-center rounded-[2rem] border border-white/5 group-hover:scale-110 transition-transform duration-500">
-                          {item.emoji}
-                        </div>
-                        <span className="text-2xl font-black text-red-500 bg-red-500/5 px-4 py-1.5 rounded-2xl">${item.price}</span>
+                  <div key={item.id} className="bg-neutral-900/50 border border-white/5 rounded-[2.5rem] overflow-hidden hover:bg-neutral-900 transition-all duration-500 group flex flex-col h-full shadow-2xl">
+                    <div className="relative h-64 w-full overflow-hidden">
+                      <img 
+                        src={item.image || `https://via.placeholder.com/800x600/111111/FFFFFF?text=${item.name}`} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=800'; }}
+                      />
+                      <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
+                        <span className="text-2xl font-black text-red-500">${item.price}</span>
                       </div>
-                      <h4 className="text-xl sm:text-2xl font-black uppercase mb-2 tracking-tight">{item.name}</h4>
-                      <p className="text-neutral-500 text-sm mb-6 leading-relaxed">{item.description}</p>
-                      {item.note && <p className="text-red-600 text-[10px] font-black uppercase mb-4 tracking-[0.2em]">{item.note}</p>}
                     </div>
-                    
-                    <div className="flex items-center gap-3 bg-black/60 p-2 rounded-[1.8rem] border border-white/5">
-                      <button 
-                        onClick={() => updateQuantity(item, -1)} 
-                        className="flex-1 h-14 rounded-2xl bg-neutral-800 hover:bg-red-600 active:scale-95 disabled:opacity-10 transition-all" 
-                        disabled={!cart[item.id]}
-                      >
-                        <Minus className="mx-auto" size={20} strokeWidth={3} />
-                      </button>
-                      <span className="w-10 text-center font-black text-2xl tabular-nums">{cart[item.id]?.quantity || 0}</span>
-                      <button 
-                        onClick={() => updateQuantity(item, 1)} 
-                        className="flex-1 h-14 rounded-2xl bg-neutral-800 hover:bg-red-600 active:scale-95 transition-all"
-                      >
-                        <Plus className="mx-auto" size={20} strokeWidth={3} />
-                      </button>
+
+                    <div className="p-8 flex flex-col flex-grow">
+                      <div className="flex-grow">
+                        <h4 className="text-xl font-black uppercase mb-2 tracking-tight group-hover:text-red-600 transition-colors">{item.name}</h4>
+                        <p className="text-neutral-500 text-sm mb-8 leading-relaxed line-clamp-2">{item.description}</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 bg-black/50 p-2 rounded-2xl border border-white/5">
+                        <button onClick={() => updateQuantity(item, -1)} className="flex-1 h-12 rounded-xl bg-neutral-800 hover:bg-red-600 transition-all flex items-center justify-center"><Minus size={18} /></button>
+                        <div className="w-12 text-center font-black text-xl">{cart[item.id]?.quantity || 0}</div>
+                        <button onClick={() => updateQuantity(item, 1)} className="flex-1 h-12 rounded-xl bg-neutral-800 hover:bg-red-600 transition-all flex items-center justify-center"><Plus size={18} /></button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -213,72 +246,67 @@ export default function App() {
           ))}
         </div>
 
-        {/* Carrito Flotante/Sticky */}
-        <aside className="lg:col-span-4 lg:sticky lg:top-28 h-fit">
-          <div className="bg-neutral-900 border border-white/10 rounded-[3.5rem] p-8 sm:p-10 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-[50px] -mr-16 -mt-16" />
-            
-            <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
-              <ShoppingBag className="text-red-600" size={28} /> MI ORDEN
-            </h3>
-
+        {/* Carrito de Compras */}
+        <aside className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
+          <div className="bg-neutral-900 border border-white/10 rounded-[3rem] p-8 shadow-2xl">
+            <h3 className="text-2xl font-black mb-8 flex items-center gap-3"><ShoppingBag className="text-red-600" /> MI PEDIDO</h3>
             {cartValues.count === 0 ? (
-              <div className="text-center py-16 opacity-20 uppercase font-black text-[10px] tracking-[0.4em]">Selecciona un plato</div>
+              <p className="text-neutral-600 uppercase text-xs font-bold text-center py-10 tracking-widest">La bolsa está vacía</p>
             ) : (
-              <div className="space-y-8 animate-in-fade">
-                <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-6">
+                <div className="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                   {Object.values(cart).map((item) => (
-                    <div key={item.id} className="flex justify-between items-center group py-1">
-                      <div className="flex items-center gap-4">
-                        <div className="text-xl bg-neutral-800 w-12 h-12 rounded-2xl flex items-center justify-center">{item.emoji}</div>
-                        <div>
-                          <p className="text-xs font-black uppercase leading-none mb-1">{item.name}</p>
-                          <p className="text-[10px] text-red-500 font-bold tracking-wider">
-                            {item.quantity} x ${item.price} = <span className="text-white">${item.price * item.quantity}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <button onClick={() => updateQuantity(item, -item.quantity)} className="text-neutral-700 hover:text-red-500 p-2 transition-colors">
-                        <Trash2 size={18} />
-                      </button>
+                    <div key={item.id} className="flex justify-between items-center text-sm border-b border-white/5 pb-2">
+                      <span className="font-bold uppercase tracking-tight">{item.name} x{item.quantity}</span>
+                      <span className="font-black text-red-500">${item.price * item.quantity}</span>
                     </div>
                   ))}
                 </div>
+                
+                <div className="flex gap-2 p-1 bg-black rounded-2xl">
+                  {['recoger', 'delivery'].map(type => (
+                    <button 
+                      key={type} 
+                      onClick={() => setDeliveryType(type)} 
+                      className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${deliveryType === type ? 'bg-red-600 shadow-lg' : 'text-neutral-500'}`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
 
-                <div className="space-y-6 pt-6 border-t border-white/5">
-                  <div className="grid grid-cols-2 gap-2 bg-black/50 p-1.5 rounded-[1.5rem] border border-white/5">
-                    {['recoger', 'delivery'].map(type => (
-                      <button 
-                        key={type} 
-                        onClick={() => setDeliveryType(type)} 
-                        className={`py-4 rounded-xl font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 ${deliveryType === type ? 'bg-neutral-800 text-white shadow-xl' : 'text-neutral-600 hover:text-neutral-400'}`}
-                      >
-                        {type}
-                      </button>
-                    ))}
-                  </div>
-
-                  {deliveryType === 'delivery' && (
-                    <div className="space-y-3 animate-in-slide">
-                      <input type="text" placeholder="NOMBRE COMPLETO" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4.5 px-6 text-xs font-bold outline-none focus:border-red-600 transition-colors" value={customerInfo.name} onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} />
-                      <input type="tel" placeholder="TELÉFONO DE CONTACTO" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4.5 px-6 text-xs font-bold outline-none focus:border-red-600 transition-colors" value={customerInfo.phone} onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} />
-                      <textarea placeholder="DIRECCIÓN EXACTA EN NJ" className="w-full bg-black/40 border border-white/5 rounded-2xl py-4.5 px-6 text-xs font-bold outline-none focus:border-red-600 h-28 resize-none transition-colors" value={customerInfo.address} onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} />
+                {deliveryType === 'delivery' && (
+                  <div className="space-y-3 animate-in-fade">
+                    <input type="text" placeholder="NOMBRE COMPLETO" className="w-full bg-black border border-white/10 rounded-xl py-4 px-4 text-xs font-bold outline-none focus:border-red-600" onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} />
+                    <input type="tel" placeholder="TELÉFONO" className="w-full bg-black border border-white/10 rounded-xl py-4 px-4 text-xs font-bold outline-none focus:border-red-600" onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} />
+                    <input type="text" placeholder="DIRECCIÓN EN NJ" className="w-full bg-black border border-white/10 rounded-xl py-4 px-4 text-xs font-bold outline-none focus:border-red-600" onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} />
+                    
+                    <div className="bg-black/40 p-4 rounded-xl border border-white/5">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-[10px] font-black text-neutral-500 uppercase">Propina sugerida</span>
+                        <span className="text-red-500 font-black text-xs">${tip}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        {[1, 2, 5].map(amt => (
+                          <button key={amt} onClick={() => setTip(amt)} className="flex-1 bg-neutral-800 py-2 rounded-lg text-[10px] font-bold hover:bg-red-600 transition-colors">${amt}</button>
+                        ))}
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  <div className="flex justify-between items-center bg-black/40 p-7 rounded-[2.5rem] border border-white/5">
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex justify-between items-end">
                     <div className="flex flex-col">
-                      <span className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.3em] mb-1">Total a Pagar</span>
-                      <span className="text-4xl font-black text-white tracking-tighter tabular-nums">${cartValues.total}</span>
+                      <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Total Estimado</span>
+                      <span className="text-4xl font-black">${cartValues.total}</span>
                     </div>
-                    <Utensils className="text-red-600/20" size={40} />
                   </div>
-
                   <button 
                     onClick={sendOrder} 
-                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-black py-6 rounded-[2.5rem] shadow-2xl shadow-green-900/20 transition-all flex items-center justify-center gap-4 text-sm tracking-tight active:scale-95"
+                    className="w-full bg-[#25D366] hover:bg-[#1ebe55] font-black py-5 rounded-2xl shadow-xl mt-6 flex items-center justify-center gap-3 transition-transform active:scale-95"
                   >
-                    <MessageCircle size={26} fill="currentColor" /> ENVIAR PEDIDO
+                    <MessageCircle size={24} /> PEDIR POR WHATSAPP
                   </button>
                 </div>
               </div>
@@ -287,90 +315,17 @@ export default function App() {
         </aside>
       </main>
 
-      <footer className="bg-black py-24 px-4 border-t border-white/5 text-center relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
-        <LogoImage className="w-28 h-28 mx-auto mb-8 grayscale hover:grayscale-0 transition-all duration-700" alt="Footer Logo" />
-        <h4 className="text-2xl font-black uppercase tracking-[0.2em] mb-3">SE ESCAPÓ EL POLLO</h4>
-        <p className="text-neutral-600 text-[10px] font-bold tracking-[0.4em] uppercase mb-10">Authentic Peruvian Broaster · New Jersey</p>
-        
-        <div className="flex justify-center gap-10 mb-12">
-           <a href={`tel:${WHATSAPP_NUMBER}`} className="text-neutral-500 hover:text-white transition-colors"><Phone size={24} /></a>
-           <a href="#" className="text-neutral-500 hover:text-white transition-colors"><MessageCircle size={24} /></a>
-        </div>
-        
-        <p className="text-neutral-800 text-[9px] font-black uppercase tracking-widest">© {new Date().getFullYear()} · Crafting Flavor in the Heights</p>
-      </footer>
-
-      {/* CSS Optimizado para Safari y Chrome */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        
-        :root { 
-          color-scheme: dark;
-          --red-accent: #dc2626;
-        }
-
-        body {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          background-color: #050505;
-          margin: 0;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Prevención de zoom automático en inputs de iOS */
-        @media (max-width: 768px) {
-          input, textarea, select {
-            font-size: 16px !important;
-          }
-        }
-
-        /* Ajustes de Safe Area para iPhone X+ */
-        .pt-safe { 
-          padding-top: env(safe-area-inset-top); 
-        }
-        .pt-safe-blur { 
-          padding-top: calc(env(safe-area-inset-top) + 0.5rem); 
-        }
-        .pb-safe { 
-          padding-bottom: env(safe-area-inset-bottom); 
-        }
-
-        /* Scrollbar minimalista para Chrome/Safari */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #050505; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { 
-          background: #222; 
-          border-radius: 20px; 
-        }
-
-        /* Animaciones */
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
-
-        @keyframes fadeIn { 
-          from { opacity: 0; transform: translateY(10px); } 
-          to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-in-fade { animation: fadeIn 0.5s ease-out forwards; }
-
-        @keyframes slideIn { 
-          from { opacity: 0; transform: translateX(20px); } 
-          to { opacity: 1; transform: translateX(0); } 
-        }
-        .animate-in-slide { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        /* Mejora visual para Safari (Backdrop-blur necesita prefijo en algunos casos) */
-        .backdrop-blur-xl {
-          -webkit-backdrop-filter: blur(24px);
-          backdrop-filter: blur(24px);
-        }
-
-        /* Evitar highlight azul al tocar en móviles */
-        * { -webkit-tap-highlight-color: transparent; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
       `}} />
     </div>
   );
